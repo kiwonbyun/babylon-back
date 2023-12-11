@@ -5,3 +5,7 @@ export const ENV_DB_PASSWORD = 'DB_PASSWORD';
 export const ENV_DB_DATABASE = 'DB_DATABASE';
 export const ENV_HASH_ROUNDS = 'HASH_ROUNDS';
 export const ENV_JWT_SECRET = 'JWT_SECRET';
+export const AWS_S3_ACCESS_KEY = 'AWS_S3_ACCESS_KEY';
+export const AWS_S3_SECRET_KEY = 'AWS_S3_SECRET_KEY';
+export const AWS_S3_REGION = 'AWS_S3_REGION';
+export const AWS_S3_BUCKET_NAME = 'AWS_S3_BUCKET_NAME';
