@@ -121,10 +121,13 @@ export class AuthService {
       sub: user.id,
       type: isRefreshToken ? 'refresh' : 'access',
     };
+    const millisecondsInADay = 24 * 60 * 60 * 1000;
 
     return this.jwtService.sign(payload, {
       secret: this.configService.get(ENV_JWT_SECRET),
-      expiresIn: isRefreshToken ? 3600 : 300,
+      expiresIn: isRefreshToken
+        ? 30 * millisecondsInADay
+        : 7 * millisecondsInADay,
     });
   }
 

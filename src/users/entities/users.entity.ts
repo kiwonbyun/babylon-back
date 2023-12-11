@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsString, Length } from 'class-validator';
-import { baseModel } from 'src/common/entities/base.entity';
+import { BaseModel } from 'src/common/entities/base.entity';
 
 import { Column, Entity } from 'typeorm';
 
@@ -10,7 +10,7 @@ export enum RolesEnum {
 }
 
 @Entity()
-export class UsersModel extends baseModel {
+export class UsersModel extends BaseModel {
   @Column({
     nullable: false,
     unique: true,
