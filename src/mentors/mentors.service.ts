@@ -76,17 +76,8 @@ export class MentorsService {
       );
     }
 
-    // dto에 profileImage가 없으면 기존의 profileImage를 유지하고,
-    // dto에 profileImage가 있으면 기존의 profileImage를 지우고 새로운 profileImage를 추가한다.
-    if (files) {
-      const result = await Promise.all(
-        files.map((file: Express.Multer.File) =>
-          this.awsService.uploadFileToS3('mentors', file),
-        ),
-      );
-      const newUrlArr = result?.map((obj) =>
-        this.awsService.getAwsS3FileUrl(obj.key),
-      );
+    if (files.length > 0) {
+      const newUrlArr = await this.awsService.uploadAndGetUrl('mentors', files);
 
       await this.mentorsRepository.update(
         { id },
