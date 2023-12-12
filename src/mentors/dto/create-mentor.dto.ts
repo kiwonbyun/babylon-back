@@ -1,7 +1,8 @@
 import { PickType } from '@nestjs/mapped-types';
 
 import { MentorsModel, SnsEnum } from '../entity/mentors.entity';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInstance, IsOptional, IsString } from 'class-validator';
+import { File } from 'buffer';
 
 export class CreateMentorDto extends PickType(MentorsModel, [
   'name',
@@ -15,6 +16,7 @@ export class CreateMentorDto extends PickType(MentorsModel, [
   @IsString()
   detailIntro?: string;
 
+  @IsInstance(File)
   @IsOptional()
   profileImage?: File[];
 

@@ -14,11 +14,14 @@ export class MentorsService {
     private readonly awsService: AwsService,
   ) {}
   async getMentors() {
-    return await this.mentorsRepository.find({ relations: ['posts'] });
+    return await this.mentorsRepository.find();
   }
 
   async getMentor(id: number) {
-    const mentor = await this.mentorsRepository.findOne({ where: { id } });
+    const mentor = await this.mentorsRepository.findOne({
+      where: { id },
+      relations: ['posts'],
+    });
     if (!mentor) {
       throw new BadRequestException(
         '해당하는 id의 mentor가 존재하지 않습니다.',
@@ -61,7 +64,7 @@ export class MentorsService {
       );
     }
     await this.mentorsRepository.remove(mentor);
-    return 'success';
+    return { message: 'success' };
   }
 
   async updateMentor(
@@ -86,7 +89,7 @@ export class MentorsService {
           profileImage: newUrlArr,
         },
       );
-      return 'success';
+      return { message: 'success' };
     }
 
     await this.mentorsRepository.update(
@@ -97,6 +100,6 @@ export class MentorsService {
       },
     );
 
-    return 'success';
+    return { message: 'success' };
   }
 }
