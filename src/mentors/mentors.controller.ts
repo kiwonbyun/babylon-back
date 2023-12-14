@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -14,11 +13,10 @@ import {
 } from '@nestjs/common';
 import { MentorsService } from './mentors.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
-import { User } from 'src/users/decorator/user.decorator';
-import { RolesEnum } from 'src/users/entities/users.entity';
 import { CreateMentorDto } from './dto/create-mentor.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UpdateMentorDto } from './dto/update-mentor.dto';
+import { CheckAdminInterceptor } from 'src/common/interceptor/check-admin.interceptor';
 
 @Controller('mentors')
 export class MentorsController {
@@ -37,19 +35,17 @@ export class MentorsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(FilesInterceptor('profileImage', 10))
+  @UseInterceptors(CheckAdminInterceptor)
   createMentor(
-    @User('role') userRole: RolesEnum,
     @Body() body: CreateMentorDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    if (userRole !== RolesEnum.ADMIN) {
-      throw new BadRequestException('일반 유저는 권한이 없습니다.');
-    }
     return this.mentorsService.createMentor(body, files);
   }
 
   @Patch(':id')
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(CheckAdminInterceptor)
   @UseInterceptors(FilesInterceptor('profileImage', 10))
   updateMentor(
     @Param('id', ParseIntPipe) id: number,
@@ -61,6 +57,7 @@ export class MentorsController {
 
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(CheckAdminInterceptor)
   removeMentor(@Param('id', ParseIntPipe) id: number) {
     return this.mentorsService.removeMentor(id);
   }

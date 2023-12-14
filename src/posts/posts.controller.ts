@@ -14,6 +14,7 @@ import { PostsService } from './posts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/create-post.dto';
+import { CheckAdminInterceptor } from 'src/common/interceptor/check-admin.interceptor';
 
 @Controller('posts')
 export class PostsController {
@@ -30,6 +31,7 @@ export class PostsController {
 
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(CheckAdminInterceptor)
   removePost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.removePost(id);
   }
@@ -37,8 +39,10 @@ export class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(FilesInterceptor('thumbnails', 10))
+  @UseInterceptors(CheckAdminInterceptor)
   createPost(
-    @Body() body: CreatePostDto,
+    @Body()
+    body: CreatePostDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     return this.postsService.createPost(body, files);
