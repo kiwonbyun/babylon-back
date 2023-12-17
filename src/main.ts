@@ -12,6 +12,11 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(8000);
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGINS, // 특정 출처 허용
+    methods: 'GET,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true, // 응답 헤더에 Access-Control-Allow-Credentials 추가
+  });
+  await app.listen(process.env.PORT);
 }
 bootstrap();
