@@ -19,6 +19,8 @@ import { MentorsModule } from './mentors/mentors.module';
 import { MentorsModel } from './mentors/entity/mentors.entity';
 import { ErrorReportModel } from './common/entities/error-report.entity';
 import { CommonModule } from './common/common.module';
+import { BannersModule } from './banners/banners.module';
+import { BannersModel } from './banners/entity/banners.entity';
 
 @Module({
   imports: [
@@ -33,7 +35,13 @@ import { CommonModule } from './common/common.module';
       username: process.env[ENV_DB_USERNAME],
       password: process.env[ENV_DB_PASSWORD],
       database: process.env[ENV_DB_DATABASE],
-      entities: [UsersModel, PostsModel, MentorsModel, ErrorReportModel],
+      entities: [
+        UsersModel,
+        PostsModel,
+        MentorsModel,
+        ErrorReportModel,
+        BannersModel,
+      ],
       synchronize: true,
     }),
     AuthModule,
@@ -41,6 +49,7 @@ import { CommonModule } from './common/common.module';
     PostsModule,
     MentorsModule,
     CommonModule,
+    BannersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
