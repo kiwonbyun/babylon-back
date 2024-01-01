@@ -9,3 +9,4 @@ export const AWS_S3_ACCESS_KEY = 'AWS_S3_ACCESS_KEY';
 export const AWS_S3_SECRET_KEY = 'AWS_S3_SECRET_KEY';
 export const AWS_S3_REGION = 'AWS_S3_REGION';
 export const AWS_S3_BUCKET_NAME = 'AWS_S3_BUCKET_NAME';
+export const MAILER_TANSPORT = 'MAILER_TANSPORT';

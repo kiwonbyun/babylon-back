@@ -21,6 +21,7 @@ import { ErrorReportModel } from './common/entities/error-report.entity';
 import { CommonModule } from './common/common.module';
 import { BannersModule } from './banners/banners.module';
 import { BannersModel } from './banners/entity/banners.entity';
+import { EmailVerifyModel } from './auth/entity/emaiil-verify.entity';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { BannersModel } from './banners/entity/banners.entity';
         MentorsModel,
         ErrorReportModel,
         BannersModel,
+        EmailVerifyModel,
       ],
       synchronize: true,
     }),

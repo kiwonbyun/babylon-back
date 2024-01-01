@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { BasicTokenGuard } from './guard/basic-token.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -35,5 +36,18 @@ export class AuthController {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
     const newToken = this.authService.rotateToken(token, true);
     return { refreshToken: newToken };
+  }
+
+  @Post('/verify/email')
+  verifyEmail(@Body('email') email: string) {
+    return this.authService.sendVerificationCode(email);
+  }
+
+  @Post('/confirm/email')
+  confirmEmail(@Body() confirmEmailDto: ConfirmEmailDto) {
+    return this.authService.confirmVerificationCode(
+      confirmEmailDto.email,
+      confirmEmailDto.code,
+    );
   }
 }

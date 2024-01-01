@@ -9,6 +9,10 @@ import * as bcrypt from 'bcrypt';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { CommonService } from 'src/common/common.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EmailVerifyModel } from './entity/emaiil-verify.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +20,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
+    private readonly commonService: CommonService,
+    @InjectRepository(EmailVerifyModel)
+    private readonly emailVerifyRepository: Repository<EmailVerifyModel>,
   ) {}
 
   /**
@@ -69,7 +76,11 @@ export class AuthService {
       return new UnauthorizedException('올바른 토큰이 아닙니다.');
     }
     return this.signToken(
-      { email: decodedPayload.email, id: decodedPayload.sub },
+      {
+        email: decodedPayload.email,
+        id: decodedPayload.sub,
+        nickname: decodedPayload.nickname,
+      },
       isRefreshToken,
     );
   };
@@ -115,10 +126,14 @@ export class AuthService {
    * 6. signToken(jwtService에서 토큰을 만들어서 반환)
    */
 
-  signToken(user: Pick<UsersModel, 'email' | 'id'>, isRefreshToken: boolean) {
+  signToken(
+    user: Pick<UsersModel, 'email' | 'id' | 'nickname'>,
+    isRefreshToken: boolean,
+  ) {
     const payload = {
       email: user.email,
       sub: user.id,
+      nickname: user.nickname,
       type: isRefreshToken ? 'refresh' : 'access',
     };
     const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -127,11 +142,11 @@ export class AuthService {
       secret: this.configService.get(ENV_JWT_SECRET),
       expiresIn: isRefreshToken
         ? 30 * millisecondsInADay
-        : 7 * millisecondsInADay,
+        : 1 * millisecondsInADay,
     });
   }
 
-  loginUser(user: Pick<UsersModel, 'email' | 'id'>) {
+  loginUser(user: Pick<UsersModel, 'email' | 'id' | 'nickname'>) {
     return {
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
@@ -174,5 +189,46 @@ export class AuthService {
       role,
     });
     return this.loginUser(newUser);
+  }
+
+  async sendVerificationCode(email: string) {
+    const code = Math.floor(Math.random() * 100000).toString();
+    const targetEmail = await this.emailVerifyRepository.findOne({
+      where: { email },
+    });
+
+    try {
+      await this.commonService.sendEmailVerificationCode(email, code);
+      if (targetEmail) {
+        targetEmail.code = code;
+        await this.emailVerifyRepository.save(targetEmail);
+      } else {
+        await this.emailVerifyRepository.save({ email, code });
+      }
+      return { message: 'success' };
+    } catch (err) {
+      throw new UnauthorizedException('이메일 인증코드 저장에 실패했습니다.');
+    }
+  }
+
+  async confirmVerificationCode(email: string, code: string) {
+    const savedTarget = await this.emailVerifyRepository.findOne({
+      where: { email },
+    });
+
+    if (!savedTarget) {
+      throw new UnauthorizedException('인증코드가 존재하지 않습니다.');
+    }
+
+    if (savedTarget.code !== code) {
+      throw new UnauthorizedException('인증코드가 일치하지 않습니다.');
+    }
+
+    try {
+      await this.emailVerifyRepository.delete({ email });
+      return { message: 'success' };
+    } catch (err) {
+      throw new UnauthorizedException('인증코드 삭제에 실패했습니다.');
+    }
   }
 }
