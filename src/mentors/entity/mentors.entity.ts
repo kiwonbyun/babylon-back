@@ -33,7 +33,7 @@ export class MentorsModel extends BaseModel {
   @IsString()
   subject: string;
 
-  @Column()
+  @Column({ select: false })
   @IsPhoneNumber('KR')
   phone: string;
 
