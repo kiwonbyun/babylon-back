@@ -40,10 +40,10 @@ export class PostsModel extends BaseModel {
   @IsOptional()
   contentsImages?: string[] = [];
 
-  @Column({ nullable: true })
+  @Column()
   @IsString()
   @IsOptional()
-  firmLink?: string;
+  firmLink: string;
 
   @Column({ nullable: true })
   @IsString()
