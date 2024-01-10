@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -20,8 +21,8 @@ import { CheckAdminInterceptor } from 'src/common/interceptor/check-admin.interc
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
   @Get()
-  getPosts() {
-    return this.postsService.getPosts();
+  getPosts(@Query() query: any) {
+    return this.postsService.getPosts({ query });
   }
 
   @Get(':id')

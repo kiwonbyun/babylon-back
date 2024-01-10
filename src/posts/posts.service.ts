@@ -6,6 +6,10 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { MentorsModel } from 'src/mentors/entity/mentors.entity';
 import { AwsService } from 'src/aws.service';
 
+interface Query {
+  [key: string]: string;
+}
+
 @Injectable()
 export class PostsService {
   constructor(
@@ -16,8 +20,11 @@ export class PostsService {
     private readonly awsService: AwsService,
   ) {}
 
-  async getPosts() {
-    return await this.postsRepository.find({ relations: { mentor: true } });
+  async getPosts({ query }: { query: Query }) {
+    return await this.postsRepository.find({
+      relations: { mentor: true },
+      order: query,
+    });
   }
 
   async getDetailPost(id: number) {
