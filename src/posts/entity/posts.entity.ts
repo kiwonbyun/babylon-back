@@ -31,6 +31,10 @@ export class PostsModel extends BaseModel {
   @IsNumber()
   likeCount: number;
 
+  @Column({ default: 0 })
+  @IsNumber()
+  views: number;
+
   @Column()
   @IsString()
   contents: string;

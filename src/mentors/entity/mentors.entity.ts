@@ -61,6 +61,11 @@ export class MentorsModel extends BaseModel {
   @IsOptional()
   profileImage?: string[] = [];
 
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  job?: string;
+
   @OneToMany(() => PostsModel, (post) => post.mentor)
   posts: PostsModel[];
 }

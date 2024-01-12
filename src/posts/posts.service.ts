@@ -35,6 +35,8 @@ export class PostsService {
     if (!post) {
       throw new BadRequestException('해당하는 id의 post가 존재하지 않습니다.');
     }
+    post.views = post.views + 1;
+    await this.postsRepository.save(post);
     return post;
   }
 

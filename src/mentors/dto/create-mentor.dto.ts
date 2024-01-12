@@ -11,6 +11,7 @@ export class CreateMentorDto extends PickType(MentorsModel, [
   'subject',
   'phone',
   'email',
+  'job',
 ]) {
   @IsOptional()
   @IsString()
