@@ -6,13 +6,14 @@ import {
   ENV_JWT_SECRET,
 } from 'src/common/constants/env-key.const';
 import * as bcrypt from 'bcrypt';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { RolesEnum, UsersModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { CommonService } from 'src/common/common.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailVerifyModel } from './entity/emaiil-verify.entity';
 import { Repository } from 'typeorm';
+import { User } from './type/type';
 
 @Injectable()
 export class AuthService {
@@ -229,6 +230,38 @@ export class AuthService {
       return { message: 'success' };
     } catch (err) {
       throw new UnauthorizedException('인증코드 삭제에 실패했습니다.');
+    }
+  }
+
+  googleLogin(req: Request & User) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return req.user;
+  }
+
+  async loginWithGoogle(user: User['user']) {
+    try {
+      const isExistingUser = await this.usersService.getUserByEmail(user.email);
+      if (isExistingUser) {
+        // 이미 가입된 유저
+        return this.loginUser({
+          email: isExistingUser.email,
+          id: isExistingUser.id,
+          nickname: isExistingUser.nickname,
+        });
+      }
+      if (!isExistingUser) {
+        // 새로운 유저
+        return this.registerWithEmail({
+          email: user.email,
+          nickname: user.name,
+          password: user.providerId + user.name,
+          role: RolesEnum.USER,
+        });
+      }
+    } catch (err) {
+      throw new UnauthorizedException('소셜 로그인에 실패했습니다.');
     }
   }
 }
