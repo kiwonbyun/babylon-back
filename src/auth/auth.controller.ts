@@ -5,6 +5,7 @@ import {
   Headers,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -14,6 +15,7 @@ import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './type/type';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -25,10 +27,20 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: Request & User) {
+  async googleAuthRedirect(@Req() req: Request & User, @Res() res: Response) {
     const googleResult = this.authService.googleLogin(req);
     const userToken = await this.authService.loginWithGoogle(googleResult);
-    return userToken;
+
+    if (userToken) {
+      res.cookie('accessToken', userToken.accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
+      res.redirect('http://localhost:3000');
+    } else {
+      res.redirect('http://localhost:3000/login/fail/');
+    }
   }
 
   @Post('register/email')
