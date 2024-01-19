@@ -30,7 +30,6 @@ export class UsersModel extends BaseModel {
 
   @Column({
     nullable: false,
-    select: false,
   })
   @IsString()
   @Length(8, 16)

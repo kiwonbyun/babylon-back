@@ -2,10 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolesEnum, UsersModel } from './entities/users.entity';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AwsService } from 'src/aws.service';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly awsService: AwsService,
     @InjectRepository(UsersModel)
     private readonly usersRepository: Repository<UsersModel>,
   ) {}
@@ -60,5 +63,52 @@ export class UsersService {
 
   async getUserById(id: number) {
     return await this.usersRepository.findOne({ where: { id } });
+  }
+
+  async updateUser(
+    id: number,
+    body: UpdateUserDto,
+    file?: Express.Multer.File,
+  ) {
+    const { nickname } = body;
+    const targetUser = await this.usersRepository.findOne({ where: { id } });
+    if (!targetUser) {
+      throw new BadRequestException('존재하지 않는 유저입니다.');
+    }
+
+    const existingNickname = await this.usersRepository.exist({
+      where: { nickname },
+    });
+
+    if (existingNickname && nickname !== targetUser.nickname) {
+      throw new BadRequestException(
+        '이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.',
+      );
+    }
+
+    try {
+      const newProfileImageUrl = file
+        ? await this.awsService.uploadFileAndGetUrl('profileImage', file)
+        : targetUser.profileImage;
+
+      targetUser.nickname = nickname;
+      targetUser.profileImage = newProfileImageUrl;
+
+      const updatedUser = await this.usersRepository.save(targetUser);
+      return updatedUser;
+    } catch (err) {
+      throw new BadRequestException('프로필 수정에 실패했습니다.');
+    }
+  }
+
+  async deleteUserProfileImage(id: number) {
+    const targetUser = await this.usersRepository.findOne({ where: { id } });
+    if (!targetUser) {
+      throw new BadRequestException('존재하지 않는 유저입니다.');
+    }
+
+    targetUser.profileImage = null;
+    const updatedUser = await this.usersRepository.save(targetUser);
+    return updatedUser;
   }
 }
