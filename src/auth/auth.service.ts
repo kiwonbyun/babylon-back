@@ -83,6 +83,7 @@ export class AuthService {
         email: decodedPayload.email,
         id: decodedPayload.sub,
         nickname: decodedPayload.nickname,
+        profileImage: decodedPayload.profileImage,
       },
       isRefreshToken,
     );
@@ -130,13 +131,14 @@ export class AuthService {
    */
 
   signToken(
-    user: Pick<UsersModel, 'email' | 'id' | 'nickname'>,
+    user: Pick<UsersModel, 'email' | 'id' | 'nickname' | 'profileImage'>,
     isRefreshToken: boolean,
   ) {
     const payload = {
       email: user.email,
       sub: user.id,
       nickname: user.nickname,
+      profileImage: user.profileImage,
       type: isRefreshToken ? 'refresh' : 'access',
     };
     const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -149,7 +151,9 @@ export class AuthService {
     });
   }
 
-  loginUser(user: Pick<UsersModel, 'email' | 'id' | 'nickname'>) {
+  loginUser(
+    user: Pick<UsersModel, 'email' | 'id' | 'nickname' | 'profileImage'>,
+  ) {
     return {
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
@@ -259,6 +263,7 @@ export class AuthService {
           email: isExistingUser.email,
           id: isExistingUser.id,
           nickname: isExistingUser.nickname,
+          profileImage: isExistingUser.profileImage,
         });
       }
       if (!isExistingUser) {
