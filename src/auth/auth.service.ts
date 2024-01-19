@@ -14,6 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EmailVerifyModel } from './entity/emaiil-verify.entity';
 import { Repository } from 'typeorm';
 import { User } from './type/type';
+import { AwsService } from 'src/aws.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly commonService: CommonService,
+    private readonly awsService: AwsService,
     @InjectRepository(EmailVerifyModel)
     private readonly emailVerifyRepository: Repository<EmailVerifyModel>,
   ) {}
@@ -173,21 +175,29 @@ export class AuthService {
     return this.loginUser(existingUser);
   }
 
-  async registerWithEmail({
-    email,
-    nickname,
-    password,
-    role,
-  }: RegisterUserDto) {
+  async registerWithEmail(
+    body: RegisterUserDto,
+    file?: Express.Multer.File | string,
+  ) {
+    const { password, email, nickname, role } = body;
+
     const hashPassword = await bcrypt.hash(
       password,
       parseInt(this.configService.get(ENV_HASH_ROUNDS)),
     );
+
+    const imageUrl = file
+      ? typeof file === 'object'
+        ? await this.awsService.uploadFileAndGetUrl('profileImage', file)
+        : file
+      : null;
+
     const newUser = await this.usersService.createUser({
       email,
       nickname,
       password: hashPassword,
       role,
+      profileImage: imageUrl,
     });
     return this.loginUser(newUser);
   }
@@ -253,12 +263,15 @@ export class AuthService {
       }
       if (!isExistingUser) {
         // 새로운 유저
-        return this.registerWithEmail({
-          email: user.email,
-          nickname: user.name,
-          password: user.providerId + user.name,
-          role: RolesEnum.USER,
-        });
+        return this.registerWithEmail(
+          {
+            email: user.email,
+            nickname: user.name,
+            password: user.providerId + user.name,
+            role: RolesEnum.USER,
+          },
+          user.profileImage,
+        );
       }
     } catch (err) {
       throw new UnauthorizedException('소셜 로그인에 실패했습니다.');

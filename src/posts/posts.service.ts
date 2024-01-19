@@ -60,7 +60,10 @@ export class PostsService {
       );
     }
 
-    const imageUrls = await this.awsService.uploadAndGetUrl('posts', files);
+    const imageUrls = await this.awsService.uploadFilesAndGetUrl(
+      'posts',
+      files,
+    );
 
     const newPost = this.postsRepository.create({
       ...dto,

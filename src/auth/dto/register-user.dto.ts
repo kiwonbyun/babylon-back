@@ -6,4 +6,6 @@ export class RegisterUserDto extends PickType(UsersModel, [
   'nickname',
   'password',
   'role',
-]) {}
+]) {
+  profileImage?: string;
+}

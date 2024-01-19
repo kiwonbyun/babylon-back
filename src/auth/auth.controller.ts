@@ -6,7 +6,9 @@ import {
   Post,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { BasicTokenGuard } from './guard/basic-token.guard';
@@ -16,6 +18,7 @@ import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './type/type';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -44,8 +47,12 @@ export class AuthController {
   }
 
   @Post('register/email')
-  registerWithEmail(@Body() body: RegisterUserDto) {
-    return this.authService.registerWithEmail(body);
+  @UseInterceptors(FileInterceptor('profileImage'))
+  registerWithEmail(
+    @Body() body: RegisterUserDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.authService.registerWithEmail(body, file);
   }
 
   @Post('login/email')

@@ -30,6 +30,7 @@ export class UsersModel extends BaseModel {
 
   @Column({
     nullable: false,
+    select: false,
   })
   @IsString()
   @Length(8, 16)
@@ -43,4 +44,8 @@ export class UsersModel extends BaseModel {
   })
   @IsString()
   role: RolesEnum;
+
+  @Column({ nullable: true })
+  @IsString()
+  profileImage: string;
 }

@@ -22,11 +22,13 @@ export class UsersService {
     nickname,
     password,
     role = RolesEnum.USER,
+    profileImage,
   }: {
     email: string;
     nickname: string;
     password: string;
     role: RolesEnum;
+    profileImage: string;
   }) {
     const existingNickname = await this.usersRepository.exist({
       where: { nickname },
@@ -46,6 +48,7 @@ export class UsersService {
       nickname,
       password,
       role,
+      profileImage,
     });
     const newUser = await this.usersRepository.save(user);
     return newUser;
@@ -53,5 +56,9 @@ export class UsersService {
 
   async getUserByEmail(email: string) {
     return await this.usersRepository.findOne({ where: { email } });
+  }
+
+  async getUserById(id: number) {
+    return await this.usersRepository.findOne({ where: { id } });
   }
 }

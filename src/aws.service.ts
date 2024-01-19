@@ -79,11 +79,17 @@ export class AwsService {
     return `https://${this.S3_BUCKET_NAME}.s3.amazonaws.com/${objectKey}`;
   }
 
-  async uploadAndGetUrl(path: string, files: Express.Multer.File[]) {
+  async uploadFilesAndGetUrl(path: string, files: Express.Multer.File[]) {
     const result = await Promise.all(
       files.map((file: Express.Multer.File) => this.uploadFileToS3(path, file)),
     );
     const newUrlArr = result?.map((obj) => this.getAwsS3FileUrl(obj.key));
     return newUrlArr;
+  }
+
+  async uploadFileAndGetUrl(path: string, file: Express.Multer.File) {
+    const result = this.uploadFileToS3(path, file);
+    const newUrl = this.getAwsS3FileUrl((await result).key);
+    return newUrl;
   }
 }

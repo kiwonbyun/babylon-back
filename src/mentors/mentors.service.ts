@@ -80,7 +80,10 @@ export class MentorsService {
     }
 
     if (files.length > 0) {
-      const newUrlArr = await this.awsService.uploadAndGetUrl('mentors', files);
+      const newUrlArr = await this.awsService.uploadFilesAndGetUrl(
+        'mentors',
+        files,
+      );
 
       await this.mentorsRepository.update(
         { id },

@@ -7,6 +7,7 @@ import { CommonModule } from 'src/common/common.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailVerifyModel } from './entity/emaiil-verify.entity';
 import { GoogleStrategy } from './google/google.strategy';
+import { AwsService } from 'src/aws.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { GoogleStrategy } from './google/google.strategy';
     CommonModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy],
+  providers: [AuthService, GoogleStrategy, AwsService],
   exports: [AuthService],
 })
 export class AuthModule {}
