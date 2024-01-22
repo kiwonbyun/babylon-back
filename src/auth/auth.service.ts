@@ -208,9 +208,14 @@ export class AuthService {
 
   async sendVerificationCode(email: string) {
     const code = Math.floor(Math.random() * 100000).toString();
-    const targetEmail = await this.emailVerifyRepository.findOne({
-      where: { email },
-    });
+    const [isExisting, targetEmail] = await Promise.all([
+      await this.usersService.getUserByEmail(email),
+      await this.emailVerifyRepository.findOne({ where: { email } }),
+    ]);
+
+    if (isExisting) {
+      throw new UnauthorizedException('이미 가입된 이메일입니다.');
+    }
 
     try {
       await this.commonService.sendEmailVerificationCode(email, code);
