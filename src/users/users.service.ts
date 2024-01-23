@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolesEnum, UsersModel } from './entities/users.entity';
 import { Repository } from 'typeorm';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { AwsService } from 'src/aws.service';
 
 @Injectable()
@@ -62,15 +61,14 @@ export class UsersService {
   }
 
   async getUserById(id: number) {
-    return await this.usersRepository.findOne({ where: { id } });
+    return await this.usersRepository.findOne({
+      where: { id },
+      select: ['id', 'email', 'nickname', 'profileImage', 'role'],
+    });
   }
 
-  async updateUser(
-    id: number,
-    body: UpdateUserDto,
-    file?: Express.Multer.File,
-  ) {
-    const { nickname } = body;
+  async updateUser(id: number, body: any, file?: Express.Multer.File) {
+    const { nickname, profileImage } = body;
     const targetUser = await this.usersRepository.findOne({ where: { id } });
     if (!targetUser) {
       throw new BadRequestException('존재하지 않는 유저입니다.');
@@ -89,7 +87,7 @@ export class UsersService {
     try {
       const newProfileImageUrl = file
         ? await this.awsService.uploadFileAndGetUrl('profileImage', file)
-        : targetUser.profileImage;
+        : profileImage || null;
 
       targetUser.nickname = nickname;
       targetUser.profileImage = newProfileImageUrl;

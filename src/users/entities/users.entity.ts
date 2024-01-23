@@ -46,5 +46,5 @@ export class UsersModel extends BaseModel {
 
   @Column({ nullable: true })
   @IsString()
-  profileImage: string;
+  profileImage?: string;
 }

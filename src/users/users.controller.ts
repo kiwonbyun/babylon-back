@@ -16,7 +16,7 @@ import {
   AccessTokenGuard,
   BearerTokenGuard,
 } from 'src/auth/guard/bearer-token.guard';
-import { UpdateUserDto } from './dto/update-user.dto';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from './decorator/user.decorator';
 
@@ -36,11 +36,11 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UseGuards(BearerTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @UseInterceptors(FileInterceptor('profileImage'))
   updateUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateUserDto,
+    @Body() body: any,
     @User('id') reqUserId: number,
     @UploadedFile() file?: Express.Multer.File,
   ) {
