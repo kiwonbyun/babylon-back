@@ -1,8 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsString, Length } from 'class-validator';
+import { BidsModel } from 'src/bids/entity/bids.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 export enum RolesEnum {
   USER = 'user',
@@ -47,4 +48,7 @@ export class UsersModel extends BaseModel {
   @Column({ nullable: true })
   @IsString()
   profileImage?: string;
+
+  @OneToMany(() => BidsModel, (bid) => bid.user)
+  bids: BidsModel[];
 }

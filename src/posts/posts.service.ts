@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostsModel } from './entity/posts.entity';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { MentorsModel } from 'src/mentors/entity/mentors.entity';
 import { AwsService } from 'src/aws.service';
@@ -27,10 +27,13 @@ export class PostsService {
     });
   }
 
-  async getDetailPost(id: number) {
+  async getDetailPost(
+    id: number,
+    relations: FindOneOptions['relations'] = { mentor: true },
+  ) {
     const post = await this.postsRepository.findOne({
       where: { id },
-      relations: { mentor: true },
+      relations,
     });
     if (!post) {
       throw new BadRequestException('해당하는 id의 post가 존재하지 않습니다.');
@@ -73,5 +76,16 @@ export class PostsService {
     await this.postsRepository.save(newPost);
 
     return { message: 'success' };
+  }
+
+  async updatePost(id: number, updatedPost: any) {
+    try {
+      await this.postsRepository.update({ id }, updatedPost);
+      return { message: 'success' };
+    } catch (error) {
+      throw new BadRequestException(
+        '변경된 Post 객체 정보 저장에 실패했습니다.',
+      );
+    }
   }
 }

@@ -16,5 +16,6 @@ import { AwsService } from 'src/aws.service';
   ],
   controllers: [PostsController],
   providers: [PostsService, AwsService],
+  exports: [PostsService],
 })
 export class PostsModule {}

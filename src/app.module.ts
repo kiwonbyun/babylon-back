@@ -22,6 +22,8 @@ import { CommonModule } from './common/common.module';
 import { BannersModule } from './banners/banners.module';
 import { BannersModel } from './banners/entity/banners.entity';
 import { EmailVerifyModel } from './auth/entity/emaiil-verify.entity';
+import { BidsModule } from './bids/bids.module';
+import { BidsModel } from './bids/entity/bids.entity';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { EmailVerifyModel } from './auth/entity/emaiil-verify.entity';
       password: process.env[ENV_DB_PASSWORD],
       database: process.env[ENV_DB_DATABASE],
       entities: [
+        BidsModel,
         UsersModel,
         PostsModel,
         MentorsModel,
@@ -52,6 +55,7 @@ import { EmailVerifyModel } from './auth/entity/emaiil-verify.entity';
     MentorsModule,
     CommonModule,
     BannersModule,
+    BidsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

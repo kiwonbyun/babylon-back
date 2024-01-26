@@ -1,7 +1,8 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { BidsModel } from 'src/bids/entity/bids.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { MentorsModel } from 'src/mentors/entity/mentors.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class PostsModel extends BaseModel {
@@ -72,4 +73,7 @@ export class PostsModel extends BaseModel {
 
   @ManyToOne(() => MentorsModel, (mentor) => mentor.posts)
   mentor: MentorsModel;
+
+  @OneToMany(() => BidsModel, (bid) => bid.post)
+  bids: BidsModel[];
 }
