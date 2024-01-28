@@ -15,7 +15,7 @@ export class BidsService {
     private readonly usersService: UsersService,
   ) {}
   async createBid(postId: number, body: CreateBidDto) {
-    const { name, phone, bidPrice, email, merchant_uid } = body;
+    const { name, phone, bidPrice, email, merchant_uid, imp_uid } = body;
     const targetUser = await this.usersService.getUserByEmail(email);
     const targetPost = await this.postsService.getDetailPost(postId, {
       mentor: false,
@@ -33,6 +33,7 @@ export class BidsService {
         phone,
         bidPrice,
         merchantUid: merchant_uid,
+        impUid: imp_uid,
         user: { id: targetUser.id },
         post: { id: postId },
       });
@@ -41,5 +42,14 @@ export class BidsService {
     }
 
     return { message: 'success' };
+  }
+
+  async getBidsByUserId(userId: number) {
+    const bids = await this.bidsRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+      relations: ['post'],
+    });
+    return bids;
   }
 }

@@ -12,4 +12,7 @@ export class CreateBidDto extends PickType(BidsModel, [
 
   @IsString()
   merchant_uid: string;
+
+  @IsString()
+  imp_uid: string;
 }

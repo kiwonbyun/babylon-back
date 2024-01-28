@@ -16,5 +16,6 @@ import { PostsModule } from 'src/posts/posts.module';
   ],
   controllers: [BidsController],
   providers: [BidsService],
+  exports: [BidsService],
 })
 export class BidsModule {}

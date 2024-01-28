@@ -26,6 +26,11 @@ export class BidsModel extends BaseModel {
   @IsNotEmpty()
   merchantUid: string;
 
+  @Column()
+  @IsString()
+  @IsNotEmpty()
+  impUid: string;
+
   @ManyToOne(() => UsersModel, (user) => user.bids)
   user: UsersModel;
 
