@@ -4,6 +4,11 @@ import { PostsModel } from 'src/posts/entity/posts.entity';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
+export enum BidStatus {
+  READY = 'ready',
+  SUCCESS = 'success',
+  FAIL = 'fail',
+}
 @Entity()
 export class BidsModel extends BaseModel {
   @Column()
@@ -27,9 +32,8 @@ export class BidsModel extends BaseModel {
   merchantUid: string;
 
   @Column()
-  @IsString()
   @IsNotEmpty()
-  impUid: string;
+  status: BidStatus;
 
   @ManyToOne(() => UsersModel, (user) => user.bids)
   user: UsersModel;

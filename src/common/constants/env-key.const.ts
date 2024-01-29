@@ -12,3 +12,5 @@ export const AWS_S3_BUCKET_NAME = 'AWS_S3_BUCKET_NAME';
 export const MAILER_TANSPORT = 'MAILER_TANSPORT';
 export const GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID';
 export const GOOGLE_SECRET = 'GOOGLE_SECRET';
+export const IMP_KEY = 'IMP_KEY';
+export const IMP_SECRET = 'IMP_SECRET';
