@@ -24,6 +24,8 @@ import { BannersModel } from './banners/entity/banners.entity';
 import { EmailVerifyModel } from './auth/entity/emaiil-verify.entity';
 import { BidsModule } from './bids/bids.module';
 import { BidsModel } from './bids/entity/bids.entity';
+import { LikesModule } from './users/likes/likes.module';
+import { LikesModel } from './users/likes/entity/likes.entity';
 
 @Module({
   imports: [
@@ -46,6 +48,7 @@ import { BidsModel } from './bids/entity/bids.entity';
         ErrorReportModel,
         BannersModel,
         EmailVerifyModel,
+        LikesModel,
       ],
       synchronize: true,
     }),
@@ -56,6 +59,7 @@ import { BidsModel } from './bids/entity/bids.entity';
     CommonModule,
     BannersModule,
     BidsModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

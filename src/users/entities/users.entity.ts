@@ -4,6 +4,7 @@ import { BidsModel } from 'src/bids/entity/bids.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 
 import { Column, Entity, OneToMany } from 'typeorm';
+import { LikesModel } from '../likes/entity/likes.entity';
 
 export enum RolesEnum {
   USER = 'user',
@@ -51,4 +52,7 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => BidsModel, (bid) => bid.user)
   bids: BidsModel[];
+
+  @OneToMany(() => LikesModel, (like) => like.user)
+  likes: LikesModel[];
 }
