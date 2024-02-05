@@ -1,33 +1,37 @@
-# # 빌드 스테이지
-# FROM node:18 AS build
+# FROM node:18-alpine AS base
+
+# # INSTALL DEPENDENCIES FOR DEVELOPMENT (FOR NEST)
+# FROM base AS deps
 # WORKDIR /usr/src/app
 
-# # 의존성 파일 복사 및 설치
-# COPY package*.json ./
-# RUN yarn
+# COPY --chown=node:node package.json yarn.lock ./
+# RUN yarn --frozen-lockfile;
 
-# # 소스 코드 복사
-# COPY . .
+# USER node
 
-# # NestJS 애플리케이션 빌드
+# # INSTALL DEPENDENCIES & BUILD FOR PRODUCTION
+# FROM base AS build
+# WORKDIR /usr/src/app
+
+# COPY --chown=node:node --from=deps /usr/src/app/node_modules ./node_modules
+# COPY --chown=node:node . .
+
 # RUN yarn build
 
-# # 실행 스테이지
-# FROM node:18 AS runtime
+# ENV NODE_ENV production
+# RUN yarn --frozen-lockfile --production;
+# RUN rm -rf ./.next/cache
+
+# USER node
+
+# # PRODUCTION IMAGE
+# FROM base AS production
 # WORKDIR /usr/src/app
 
-# # 환경 변수 설정
-# ENV NODE_ENV=production
+# COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+# COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
-# # 애플리케이션 의존성만 설치
-# COPY package*.json ./
-# RUN yarn --only=production
-
-# # 빌드 스테이지에서 빌드된 파일 복사
-# COPY --from=build /usr/src/app/dist ./dist
-
-# # 애플리케이션 실행
-# CMD ["node", "dist/main"]
+# CMD [ "node", "dist/main.js" ]
 
 # docker image 생성하는 명령어
 # docker build . -t babylon-back
@@ -35,12 +39,12 @@
 # docker images
 # docker image 실행하는 명령어
 # docker container run -d -p 8000:8000 babylon-back
-FROM node:18
+FROM node:18-alpine
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
-RUN yarn
 COPY . .
+RUN yarn
 RUN yarn build
 EXPOSE 8000
 CMD ["node", "dist/main"]
