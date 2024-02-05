@@ -1,6 +1,5 @@
 import {
   Controller,
-  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -38,14 +37,5 @@ export class LikesController {
     @User() user: UsersModel,
   ) {
     return this.likesService.createLike(postId, user);
-  }
-
-  @Delete(':id')
-  @UseGuards(AccessTokenGuard)
-  async deleteLike(
-    @Param('id', ParseIntPipe) postId: number,
-    @User() user: UsersModel,
-  ) {
-    return this.likesService.deleteLike(postId, user);
   }
 }
