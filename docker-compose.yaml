@@ -1,4 +1,8 @@
 version: '3.8'
+networks:
+  babylon-api-net:
+    driver: bridge
+
 services:
   app:
     build:
@@ -15,6 +19,8 @@ services:
       DB_NAME: ${DB_DATABASE}
     env_file:
       - .env
+    networks:
+      - babylon-api-net
 
     depends_on:
       - postgres
@@ -29,3 +35,5 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
+    networks:
+      - babylon-api-net
