@@ -45,6 +45,11 @@ jobs:
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_KEY}}
           script: |
+            echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+            echo "AWS_REGION: $AWS_REGION"
+            echo "ECR_REGISTRY: $ECR_REGISTRY"
+            echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+            echo "IMAGE_TAG: $IMAGE_TAG"
             set -x
             aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
             echo "Pulling image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
