@@ -40,9 +40,7 @@ jobs:
           script: |
             set -x
             aws ecr get-login-password --region ${{secrets.AWS_REGION}} | docker login --username AWS --password-stdin ${{ steps.login-pf-aws-ecr.outputs.registry }}
-
             docker pull ${{ steps.login-pf-aws-ecr.outputs.registry }}/${{secrets.AWS_ECR_REPO}}:latest || exit 1
-
             cd app
             docker-compose down
             docker-compose up -d
