@@ -33,27 +33,19 @@ jobs:
 
       - name: Deploy EC2 application
         uses: appleboy/ssh-action@v0.1.6
-        env:
-          ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{secrets.AWS_ECR_REPO}}
-          IMAGE_TAG: latest
-          AWS_REGION: ${{secrets.AWS_REGION}}
-          AWS_ACCOUNT_ID: ${{secrets.AWS_ACCOUNT_ID}}
-
         with:
           host: ${{secrets.EC2_HOST}}
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_KEY}}
           script: |
-            echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
-            echo "AWS_REGION: $AWS_REGION"
-            echo "ECR_REGISTRY: $ECR_REGISTRY"
-            echo "ECR_REPOSITORY: $ECR_REPOSITORY"
-            echo "IMAGE_TAG: $IMAGE_TAG"
+            echo "AWS_ACCOUNT_ID: ${{secrets.AWS_ACCOUNT_ID}}
+            echo "AWS_REGION: ${{secrets.AWS_REGION}}
+            echo "ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}"
+            echo "ECR_REPOSITORY: ${{secrets.AWS_ECR_REPO}}
             set -x
             aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-            echo "Pulling image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG || exit 1
+            echo "Pulling image ${{ steps.login-pf-aws-ecr.outputs.registry }}/$ECR_REPOSITORY:latest"
+            docker pull ${{ steps.login-pf-aws-ecr.outputs.registry }}/$ECR_REPOSITORY:latest || exit 1
             echo "Image pulled successfully"
             cd app
             docker-compose down
