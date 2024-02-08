@@ -43,9 +43,9 @@ jobs:
             echo "ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}"
             echo "ECR_REPOSITORY: ${{secrets.AWS_ECR_REPO}}
             set -x
-            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-            echo "Pulling image ${{ steps.login-pf-aws-ecr.outputs.registry }}/$ECR_REPOSITORY:latest"
-            docker pull ${{ steps.login-pf-aws-ecr.outputs.registry }}/$ECR_REPOSITORY:latest || exit 1
+            aws ecr get-login-password --region ${{secrets.AWS_REGION}} | docker login --username AWS --password-stdin ${{ steps.login-pf-aws-ecr.outputs.registry }}
+            echo "Pulling image ${{ steps.login-pf-aws-ecr.outputs.registry }}/${{secrets.AWS_ECR_REPO}}:latest"
+            docker pull ${{ steps.login-pf-aws-ecr.outputs.registry }}/${{secrets.AWS_ECR_REPO}}:latest || exit 1
             echo "Image pulled successfully"
             cd app
             docker-compose down
