@@ -255,6 +255,7 @@ export class AuthService {
   }
 
   async loginWithGoogle(user: User['user']) {
+    console.log({ user });
     try {
       const isExistingUser = await this.usersService.getUserByEmail(user.email);
       if (isExistingUser) {
