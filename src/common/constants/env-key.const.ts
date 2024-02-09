@@ -14,3 +14,4 @@ export const GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID';
 export const GOOGLE_SECRET = 'GOOGLE_SECRET';
 export const IMP_KEY = 'IMP_KEY';
 export const IMP_SECRET = 'IMP_SECRET';
+export const SERVER_URL = 'SERVER_URL';

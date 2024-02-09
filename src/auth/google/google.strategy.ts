@@ -5,6 +5,7 @@ import { Strategy, Profile } from 'passport-google-oauth20';
 import {
   GOOGLE_CLIENT_ID,
   GOOGLE_SECRET,
+  SERVER_URL,
 } from 'src/common/constants/env-key.const';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: configService.get(GOOGLE_CLIENT_ID),
       clientSecret: configService.get(GOOGLE_SECRET),
-      callbackURL: 'http://localhost:8000/auth/google/callback',
+      callbackURL: configService.get(SERVER_URL) + '/auth/google/callback',
       scope: ['email', 'profile'],
     });
   }
