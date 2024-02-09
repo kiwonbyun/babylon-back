@@ -141,6 +141,7 @@ export class AuthService {
       profileImage: user.profileImage,
       type: isRefreshToken ? 'refresh' : 'access',
     };
+    console.log({ payload });
     const millisecondsInADay = 24 * 60 * 60 * 1000;
 
     return this.jwtService.sign(payload, {
@@ -184,17 +185,21 @@ export class AuthService {
     file?: Express.Multer.File | string,
   ) {
     const { password, email, nickname, role } = body;
+    console.log({ password, email, nickname, role });
 
     const hashPassword = await bcrypt.hash(
       password,
       parseInt(this.configService.get(ENV_HASH_ROUNDS)),
     );
+    console.log({ hashPassword });
 
     const imageUrl = file
       ? typeof file === 'object'
         ? await this.awsService.uploadFileAndGetUrl('profileImage', file)
         : file
       : null;
+
+    console.log({ imageUrl });
 
     const newUser = await this.usersService.createUser({
       email,
@@ -203,6 +208,7 @@ export class AuthService {
       role,
       profileImage: imageUrl,
     });
+
     return this.loginUser(newUser);
   }
 
@@ -255,7 +261,6 @@ export class AuthService {
   }
 
   async loginWithGoogle(user: User['user']) {
-    console.log({ user });
     try {
       const isExistingUser = await this.usersService.getUserByEmail(user.email);
       if (isExistingUser) {
