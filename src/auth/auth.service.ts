@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -208,6 +212,10 @@ export class AuthService {
 
   async sendVerificationCode(email: string) {
     const code = Math.floor(Math.random() * 100000).toString();
+    const existedUser = await this.usersService.getUserByEmail(email);
+    if (existedUser) {
+      throw new BadRequestException('이미 가입된 이메일입니다.');
+    }
     const targetEmail = await this.emailVerifyRepository.findOne({
       where: { email },
     });
