@@ -40,9 +40,13 @@ export class AuthController {
         secure: true,
         sameSite: 'none',
       });
-      res.redirect('http://localhost:3000');
+      res.redirect(
+        'http://ec2-43-200-191-3.ap-northeast-2.compute.amazonaws.com:3000',
+      );
     } else {
-      res.redirect('http://localhost:3000/login/fail/');
+      res.redirect(
+        'http://ec2-43-200-191-3.ap-northeast-2.compute.amazonaws.com:3000/login/fail/',
+      );
     }
   }
 
