@@ -13,16 +13,9 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: (origin, callback) => {
-      const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: process.env.ALLOWED_ORIGINS, // 특정 출처 허용
     methods: 'GET,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
+    credentials: true, // 응답 헤더에 Access-Control-Allow-Credentials 추가
   });
   await app.listen(process.env.PORT);
 }
