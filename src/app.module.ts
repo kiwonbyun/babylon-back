@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,6 +26,7 @@ import { BidsModule } from './bids/bids.module';
 import { BidsModel } from './bids/entity/bids.entity';
 import { LikesModule } from './users/likes/likes.module';
 import { LikesModel } from './users/likes/entity/likes.entity';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -62,6 +63,10 @@ import { LikesModel } from './users/likes/entity/likes.entity';
     LikesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Logger],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
