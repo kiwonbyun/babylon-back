@@ -19,10 +19,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from './type/type';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ConfigService } from '@nestjs/config';
+import { CLIENT_URL } from 'src/common/constants/env-key.const';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -40,13 +45,9 @@ export class AuthController {
         secure: true,
         sameSite: 'none',
       });
-      res.redirect(
-        'http://ec2-43-200-191-3.ap-northeast-2.compute.amazonaws.com:3000',
-      );
+      res.redirect(this.configService.get(CLIENT_URL));
     } else {
-      res.redirect(
-        'http://ec2-43-200-191-3.ap-northeast-2.compute.amazonaws.com:3000/login/fail/',
-      );
+      res.redirect(`${this.configService.get(CLIENT_URL)}/login/fail`);
     }
   }
 

@@ -15,3 +15,4 @@ export const GOOGLE_SECRET = 'GOOGLE_SECRET';
 export const IMP_KEY = 'IMP_KEY';
 export const IMP_SECRET = 'IMP_SECRET';
 export const SERVER_URL = 'SERVER_URL';
+export const CLIENT_URL = 'CLIENT_URL';
