@@ -33,9 +33,11 @@ export class LikesService {
   }
 
   async getIsLiked(postId: number, user: UsersModel) {
+    console.time('isliked');
     const usersLike = await this.likesRepository.find({
       where: { user: { id: user.id } },
     });
+    console.timeEnd('isliked');
 
     return usersLike.some((like) => like.postId === postId);
   }

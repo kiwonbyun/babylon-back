@@ -31,6 +31,7 @@ export class PostsService {
     id: number,
     relations: FindOneOptions['relations'] = { mentor: true },
   ) {
+    console.time('postdetail');
     const post = await this.postsRepository.findOne({
       where: { id },
       relations,
@@ -40,6 +41,7 @@ export class PostsService {
     }
     post.views = post.views + 1;
     await this.postsRepository.save(post);
+    console.timeEnd('postdetail');
     return post;
   }
 
